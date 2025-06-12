@@ -6,12 +6,11 @@ interface ResponsiveMobilePreviewProps {
   deviceSizes: Record<string, { w: number; h: number; label: string }>;
   previewRoute: string;
   setPreviewRoute: (route: string) => void;
-  alignLoginLeft: boolean;
-  darkBackground: boolean;
-  accentHeadline: boolean;
+
   projectName: string;
   previewLoading: boolean;
   mobileView: boolean;
+  fileContents: Record<string, { display: string; preview?: string }>;
 }
 
 export function ResponsiveMobilePreview({
@@ -19,12 +18,9 @@ export function ResponsiveMobilePreview({
   deviceSizes,
   previewRoute,
   setPreviewRoute,
-  alignLoginLeft,
-  darkBackground,
-  accentHeadline,
   projectName,
-  previewLoading,
   mobileView,
+  fileContents,
 }: ResponsiveMobilePreviewProps) {
   const outerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
@@ -92,11 +88,8 @@ export function ResponsiveMobilePreview({
               isMobilePreview={mobileView}
               route={previewRoute}
               onRouteChange={setPreviewRoute}
-              alignLoginLeft={alignLoginLeft}
-              darkBackground={darkBackground}
-              accentHeadline={accentHeadline}
               projectName={projectName}
-              loading={previewLoading}
+              fileContents={fileContents}
             />
           </div>
         </div>

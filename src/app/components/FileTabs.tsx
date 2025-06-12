@@ -6,31 +6,33 @@ function getBasename(filePath: string) {
 }
 
 interface FileTabsProps {
-  files: string[];
+  files: Record<string, { display: string; preview?: string }>;
   currentFile: string;
   onSelect: (file: string) => void;
-  fileContents: Record<string, string>;
 }
 
 const FileTabs: React.FC<FileTabsProps> = ({
   files,
   currentFile,
   onSelect,
-  fileContents,
 }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
-    if (currentFile && fileContents[currentFile] !== undefined) {
-      await navigator.clipboard.writeText(fileContents[currentFile]);
+    if (currentFile && files[currentFile] !== undefined) {
+      await navigator.clipboard.writeText(files[currentFile].display);
       setCopied(true);
       setTimeout(() => setCopied(false), 1200);
     }
   };
 
+  if (!files || Object.keys(files).length === 0) {
+    return <div className="text-zinc-400 text-center p-8">No files yet</div>;
+  }
+
   return (
     <div className="flex items-end gap-2">
-      {files.map((file) => (
+      {Object.keys(files).map((file) => (
         <div key={file} className="flex flex-col items-center">
           <button
             onClick={() => onSelect(file)}

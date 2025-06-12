@@ -1,27 +1,35 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import FileTabs from "./FileTabs";
 import CodeViewer from "./CodeViewer";
 import LivePreview from "./LivePreview";
-import AiPromptBar from "./AiPromptBar";
+
 import { ProjectFileTree } from "./ProjectFileTree";
-import { getInitialFiles } from "../constants";
+
 import { ResponsiveMobilePreview } from "./ResponsiveMobilePreview";
+import { Package, FilePlus } from "lucide-react";
+
+interface EditorLayoutProps {
+  files: Record<string, { display: string; preview?: string }>;
+  projectName: string;
+  onNewProject: () => void;
+}
 
 // Main layout
-export default function EditorLayout({ projectName }: { projectName: string }) {
-  // Use full paths as keys!
-  const [fileContents, setFileContents] = useState(
-    getInitialFiles(projectName)
-  );
-  const files = Object.keys(fileContents);
+export default function EditorLayout({
+  files,
+  projectName,
+  onNewProject,
+}: EditorLayoutProps) {
+  const [fileContents, setFileContents] = useState(files);
+
   const [currentFile, setCurrentFile] = useState(
-    files.find((f) => f.endsWith("page.tsx")) || files[0]
+    Object.keys(files).find((f) => f.endsWith("page.tsx")) ||
+      Object.keys(files)[0]
   );
+
   const [learningMode, setLearningMode] = useState(false);
-  const [alignLoginLeft, setAlignLoginLeft] = useState(false);
-  const [darkBackground, setDarkBackground] = useState(false);
-  const [accentHeadline, setAccentHeadline] = useState(false);
   const [previewLoading, setPreviewLoading] = useState(false);
 
   const [mobileView, setMobileView] = useState(false);
@@ -32,46 +40,17 @@ export default function EditorLayout({ projectName }: { projectName: string }) {
     galaxy: { w: 360, h: 800, label: "Galaxy S20" },
   };
 
+  // To open package.json instructions:
+  const handlePackageJsonClick = () => setCurrentFile("package.json.virtual");
+
   // For preview routing
   const [previewRoute, setPreviewRoute] = useState("/");
 
-  // Handle prompt bar (update fileContents as needed)
-  const handlePrompt = (prompt: string) => {
-    setPreviewLoading(true);
-    setTimeout(() => {
-      const updated = { ...fileContents };
-      if (prompt.toLowerCase().includes("move the login button to the left")) {
-        setAlignLoginLeft(true);
-        // Safely update page.tsx with full path
-        if (updated["app/page.tsx"]) {
-          updated["app/page.tsx"] = updated["app/page.tsx"].replace(
-            /mt-12"(.|\s)*?<PreviewLoginButton \/>/,
-            'mt-12 flex flex-col items-start"{children}<PreviewLoginButton />'
-          );
-        }
-      }
-      if (prompt.toLowerCase().includes("darken the background")) {
-        setDarkBackground(true);
-        if (updated["app/layout.tsx"]) {
-          updated["app/layout.tsx"] = updated["app/layout.tsx"].replace(
-            /bg-gradient-to-br[^`]*/,
-            "bg-zinc-950"
-          );
-        }
-      }
-      if (prompt.toLowerCase().includes("accent color for the text")) {
-        setAccentHeadline(true);
-        if (updated["app/page.tsx"]) {
-          updated["app/page.tsx"] = updated["app/page.tsx"].replace(
-            /text-cyan-600/g,
-            "text-cyan-400"
-          );
-        }
-      }
-      setFileContents(updated);
-      setPreviewLoading(false);
-    }, 1200);
-  };
+  const ROUTES = [
+    { key: "/", label: "Home" },
+    { key: "/about", label: "About" },
+    { key: "/contact", label: "Contact" },
+  ];
 
   return (
     <div className="h-screen flex flex-col">
@@ -86,6 +65,14 @@ export default function EditorLayout({ projectName }: { projectName: string }) {
             Project scaffolding tool by BauerVision
           </span>
         </div>
+        {/* New Project button */}
+        <button
+          className="px-4 py-2 rounded text-sm font-bold bg-zinc-800 text-cyan-300 hover:bg-cyan-800 ml-8 border border-cyan-900"
+          onClick={onNewProject}
+          title="Start a new project"
+        >
+          <FilePlus className="w-5 h-5" />
+        </button>
         {/* Instructions (center) */}
         <div className="flex-1 text-center text-zinc-400 text-sm font-medium px-8">
           Instantly scaffold a new project, preview code for each file, then
@@ -122,73 +109,136 @@ export default function EditorLayout({ projectName }: { projectName: string }) {
           files={files}
           currentFile={currentFile}
           onSelect={setCurrentFile}
-          fileContents={fileContents}
         />
         {mobileView && (
-          <div className="flex gap-2 ml-2">
-            {Object.entries(deviceSizes).map(([k, v]) => (
-              <button
-                key={k}
-                onClick={() => setDevice(k as any)}
-                className={`px-3 py-1 rounded text-xs font-bold border ${
-                  device === k
-                    ? "bg-cyan-500 text-white border-cyan-400"
-                    : "bg-zinc-800 text-cyan-300 border-zinc-800"
-                }`}
-                title={v.label}
-              >
-                {v.label}
-              </button>
-            ))}
+          <div className="flex items-center gap-3 ml-2 w-full max-w-xl">
+            {/* Instructional text */}
+            <span className="text-xs text-cyan-400 font-medium">
+              Mobile navigation:
+            </span>
+            {/* Page Tabs */}
+            <div className="flex gap-1 bg-zinc-900 dark:bg-zinc-800 p-1 rounded-xl shadow">
+              {ROUTES.map((route) => (
+                <button
+                  key={route.key}
+                  onClick={() => setPreviewRoute(route.key)}
+                  className={`px-3 py-1 rounded-lg font-bold text-xs transition-all ${
+                    previewRoute === route.key
+                      ? "bg-cyan-600 text-white shadow"
+                      : "bg-zinc-800 text-cyan-200 hover:bg-cyan-700 hover:text-white"
+                  }`}
+                >
+                  {route.label}
+                </button>
+              ))}
+            </div>
+            {/* Device size buttons */}
+            <div className="flex gap-1 ml-3">
+              {Object.entries(deviceSizes).map(([k, v]) => (
+                <button
+                  key={k}
+                  onClick={() => setDevice(k as any)}
+                  className={`px-3 py-1 rounded text-xs font-bold border ${
+                    device === k
+                      ? "bg-cyan-500 text-white border-cyan-400"
+                      : "bg-zinc-800 text-cyan-300 border-zinc-800"
+                  }`}
+                  title={v.label}
+                >
+                  {v.label}
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>
       {/* Main editor area: FileTree | Code | Preview */}
-      <div className="flex flex-1 min-h-0 bg-zinc-900">
+      <div className="flex flex-1 min-h-0 bg-zinc-900 w-full">
         {/* Sidebar: File Tree */}
-        <aside className="h-full border-r border-zinc-800 bg-zinc-950 px-0 py-4 min-w-[220px] max-w-[280px] overflow-y-auto">
-          <ProjectFileTree files={fileContents} />
+        <aside className="h-full border-r border-zinc-800 bg-zinc-950 px-0 py-4 min-w-[257px] max-w-[257px] flex-shrink-0 overflow-y-auto">
+          <ProjectFileTree
+            files={fileContents}
+            currentFile={currentFile}
+            onFileSelect={(filePath) => setCurrentFile(filePath)}
+            showPackageJsonSpecial={true}
+            onPackageJsonClick={handlePackageJsonClick}
+          />
         </aside>
         {/* Code Editor (left half) */}
-        <section className="w-1/2 border-r border-zinc-800 p-6 overflow-auto">
-          <CodeViewer
-            filename={currentFile}
-            code={fileContents[currentFile]}
-            learningMode={learningMode}
-          />
+        <section className="flex-shrink-0 w-[50%] min-w-[400px] max-w-[900px] border-r border-zinc-800 min-h-0 overflow-hidden">
+          {currentFile === "package.json.virtual" ? (
+            // Special package.json instructions panel
+            <div className="max-w-lg mx-auto bg-zinc-900/90 rounded-2xl shadow-xl p-8 mt-12 text-center">
+              <div className="flex flex-col items-center mb-4">
+                <Package size={32} className="text-yellow-400 mb-2" />
+                <span className="font-bold text-lg text-cyan-300">
+                  Add dependencies
+                </span>
+              </div>
+              <div className="text-zinc-100 mb-2 text-sm">
+                Add these dependencies to your{" "}
+                <code className="font-mono text-cyan-200">package.json</code>{" "}
+                (or run the install command):
+              </div>
+              <div className="flex flex-col items-center gap-2 mb-4">
+                <pre className="bg-zinc-800 px-4 py-2 rounded-lg text-left text-cyan-200 font-mono text-sm select-all">
+                  {`"lucide-react": "^0.273.0"`}
+                </pre>
+                <button
+                  onClick={() =>
+                    navigator.clipboard.writeText(`npm install lucide-react`)
+                  }
+                  className="px-4 py-2 rounded bg-cyan-600 text-white font-semibold hover:bg-cyan-500 transition"
+                >
+                  Copy install command
+                </button>
+                <span className="text-zinc-400 text-xs">
+                  Run in your project folder:
+                </span>
+                <pre className="bg-zinc-800 px-3 py-1 rounded text-xs font-mono text-cyan-300 select-all">
+                  npm install lucide-react
+                </pre>
+              </div>
+              <div className="text-zinc-400 text-xs">
+                <strong>Tip:</strong> Don’t overwrite your existing{" "}
+                <code>package.json</code>—just add new dependencies!
+              </div>
+            </div>
+          ) : (
+            <CodeViewer
+              filename={currentFile}
+              code={fileContents[currentFile].display}
+              learningMode={learningMode}
+            />
+          )}
         </section>
+
         {/* Live Preview (right half) */}
-        <section className="w-1/2 flex flex-row items-start justify-center overflow-visible min-h-0 relative">
+        <section className="flex-1 min-w-[400px] min-h-0 overflow-auto bg-zinc-950 ">
           {mobileView ? (
             <ResponsiveMobilePreview
               device={device}
               deviceSizes={deviceSizes}
               previewRoute={previewRoute}
               setPreviewRoute={setPreviewRoute}
-              alignLoginLeft={alignLoginLeft}
-              darkBackground={darkBackground}
-              accentHeadline={accentHeadline}
               projectName={projectName}
               previewLoading={previewLoading}
               mobileView={mobileView}
+              fileContents={fileContents}
             />
           ) : (
-            <div className="w-full h-full">
-              <LivePreview
-                isMobilePreview={mobileView}
-                route={previewRoute}
-                onRouteChange={setPreviewRoute}
-                alignLoginLeft={alignLoginLeft}
-                darkBackground={darkBackground}
-                accentHeadline={accentHeadline}
-                projectName={projectName}
-                loading={previewLoading}
-              />
-            </div>
+            <LivePreview
+              isMobilePreview={mobileView}
+              route={previewRoute}
+              onRouteChange={setPreviewRoute}
+              projectName={projectName}
+              loading={previewLoading}
+              fileContents={fileContents}
+            />
           )}
         </section>
       </div>
-      <AiPromptBar onPrompt={handlePrompt} loading={previewLoading} />
+      {/* <AiPromptBar onPrompt={handlePrompt} loading={previewLoading} /> */}
     </div>
   );
 }
