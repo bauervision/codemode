@@ -5,7 +5,7 @@ import { useState } from "react";
 import Footer from "./PreviewFooter";
 import PreviewNavbar from "./PreviewNavbar";
 import { DemoPageRenderer } from "./DemoPageRenderer";
-import LoginButton from "./PreviewLoginButton";
+import { ColorRoles } from "../types";
 
 export default function LivePreview({
   isMobilePreview,
@@ -13,7 +13,7 @@ export default function LivePreview({
   loading,
   route,
   onRouteChange,
-  fileContents,
+  colors,
 }: {
   isMobilePreview: boolean;
   projectName: string;
@@ -21,8 +21,18 @@ export default function LivePreview({
   route: string;
   onRouteChange: (route: string) => void;
   fileContents: Record<string, { display: string; preview?: string }>;
+  colors: ColorRoles;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // Map colors to CSS vars
+  const cssVars = {
+    "--color-primary": colors.primary,
+    "--color-secondary": colors.secondary,
+    "--color-accent": colors.accent,
+    "--color-background": colors.background,
+    "--color-surface": colors.surface,
+  };
 
   if (loading) {
     return (
@@ -32,27 +42,10 @@ export default function LivePreview({
     );
   }
 
-  // Route to file map:
-  const routeToFile: Record<string, string> = {
-    "/": "app/page.tsx",
-    "/about": "app/about.tsx",
-    "/contact": "app/contact.tsx",
-  };
-  const fileKey = routeToFile[route] || "app/page.tsx";
-  const code =
-    fileContents[fileKey]?.preview || "<div>No preview available</div>";
-
-  // Any demo/mock components referenced in preview code need to be passed here:
-  const scope = {
-    React,
-    LoginButton,
-    // Add more as needed!
-    projectName, // if your preview code uses this
-  };
-
   return (
     <div
       className={`relative min-h-[400px] flex flex-col w-full h-full bg-zinc-950 border-zinc-900 rounded-2xl shadow-xl transition-all duration-500`}
+      style={cssVars as React.CSSProperties}
     >
       {/* Mobile overlay/drawer */}
       {isMobilePreview && menuOpen && (
@@ -67,7 +60,11 @@ export default function LivePreview({
         onMenuOpen={() => setMenuOpen(true)}
       />
       <main className="w-full min-h-[100vh]  flex flex-col">
-        <DemoPageRenderer code={code} scope={scope} />
+        <DemoPageRenderer
+          route={route}
+          projectName={projectName}
+          colors={colors}
+        />
       </main>
       <Footer projectName={projectName} />
     </div>

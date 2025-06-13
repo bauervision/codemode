@@ -1,22 +1,74 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  LiveProvider,
-  LivePreview as LiveReactPreview,
-  LiveError,
-} from "react-live";
-import React from "react";
+import { ColorRoles } from "../types";
 
 export function DemoPageRenderer({
-  code,
-  scope,
+  route,
+  projectName,
+  colors,
 }: {
-  code: string;
-  scope: Record<string, any>;
+  route: string;
+  projectName: string;
+  colors: ColorRoles;
 }) {
+  if (route === "/about") {
+    return (
+      <section
+        style={{
+          backgroundColor: colors.background,
+          color: colors.text,
+          transition: "background 0.3s, color 0.3s",
+        }}
+        className="w-full min-h-[100vh] p-10 shadow-xl flex flex-col"
+      >
+        <h1 style={{ color: colors.text }} className="text-3xl font-bold mb-4">
+          About
+        </h1>
+        <p className="mb-8 " style={{ color: colors.text }}>
+          This project was scaffolded using BauerVision CodeMode.
+          <br />
+          Easily preview and build modern, mobile-responsive React apps.
+        </p>
+      </section>
+    );
+  }
+  if (route === "/contact") {
+    return (
+      <section
+        style={{
+          backgroundColor: colors.background,
+          color: colors.text,
+          transition: "background 0.3s, color 0.3s",
+        }}
+        className="w-full min-h-[100vh] p-10 shadow-xl flex flex-col"
+      >
+        <h1 style={{ color: colors.text }} className="text-3xl font-bold mb-4">
+          Contact
+        </h1>
+        <p className="mb-8 " style={{ color: colors.text }}>
+          Have questions or feedback?
+          <br />
+          Contact the developer at mike@bauervision.com.
+        </p>
+      </section>
+    );
+  }
+  // Home/default
   return (
-    <LiveProvider code={code} scope={scope}>
-      <LiveReactPreview />
-      <LiveError />
-    </LiveProvider>
+    <section
+      style={{
+        backgroundColor: colors.background,
+        color: colors.text,
+        transition: "background 0.3s, color 0.3s",
+      }}
+      className="w-full min-h-[100vh] p-10 shadow-xl flex flex-col"
+    >
+      <h1 style={{ color: colors.text }} className="text-4xl font-bold mb-4">
+        Welcome to {projectName}!
+      </h1>
+      <p className="mb-8 " style={{ color: colors.text }}>
+        Instantly scaffold beautiful, production-ready apps.
+        <br />
+        Use the prompt bar below to ask CodeMode to update the UI!
+      </p>
+    </section>
   );
 }

@@ -9,6 +9,10 @@ import { ProjectFileTree } from "./ProjectFileTree";
 
 import { ResponsiveMobilePreview } from "./ResponsiveMobilePreview";
 import { Package, FilePlus } from "lucide-react";
+import { ColorRoles } from "../types";
+import { ThemeSidebarModule } from "./ThemeSidebarModule";
+import { generateRandomPalette } from "../utils/color";
+import { useTheme } from "../context/ThemeContext";
 
 interface EditorLayoutProps {
   files: Record<string, { display: string; preview?: string }>;
@@ -22,6 +26,16 @@ export default function EditorLayout({
   projectName,
   onNewProject,
 }: EditorLayoutProps) {
+  const {
+    colors,
+    setColors,
+    locks,
+    setLocks,
+    finalized,
+    setFinalized,
+    randomizeColors,
+  } = useTheme();
+
   const [fileContents, setFileContents] = useState(files);
 
   const [currentFile, setCurrentFile] = useState(
@@ -155,16 +169,30 @@ export default function EditorLayout({
       {/* Main editor area: FileTree | Code | Preview */}
       <div className="flex flex-1 min-h-0 bg-zinc-900 w-full">
         {/* Sidebar: File Tree */}
-        <aside className="h-full border-r border-zinc-800 bg-zinc-950 px-0 py-4 min-w-[257px] max-w-[257px] flex-shrink-0 overflow-y-auto">
-          <ProjectFileTree
-            files={fileContents}
-            currentFile={currentFile}
-            onFileSelect={(filePath) => setCurrentFile(filePath)}
-            showPackageJsonSpecial={true}
-            onPackageJsonClick={handlePackageJsonClick}
-          />
+        <aside className="flex flex-col h-full min-w-[220px] max-w-[280px] border-r border-zinc-800 bg-zinc-950 px-0 py-4">
+          <div className="flex-1 overflow-y-auto pr-1">
+            <ProjectFileTree
+              files={fileContents}
+              currentFile={currentFile}
+              onFileSelect={(filePath) => setCurrentFile(filePath)}
+              showPackageJsonSpecial={true}
+              onPackageJsonClick={handlePackageJsonClick}
+            />{" "}
+          </div>
+          {/* Theme Color Picker (fixed) */}
+          <div className="shrink-0 border-t border-zinc-800 p-2">
+            <ThemeSidebarModule
+              colors={colors}
+              locks={locks}
+              setColors={setColors}
+              setLocks={setLocks}
+              finalized={finalized}
+              setFinalized={setFinalized}
+            />
+          </div>
         </aside>
-        {/* Code Editor (left half) */}
+
+        {/* Code Editor (center) */}
         <section className="flex-shrink-0 w-[50%] min-w-[400px] max-w-[900px] border-r border-zinc-800 min-h-0 overflow-hidden">
           {currentFile === "package.json.virtual" ? (
             // Special package.json instructions panel
@@ -209,11 +237,12 @@ export default function EditorLayout({
               filename={currentFile}
               code={fileContents[currentFile].display}
               learningMode={learningMode}
+              finalized={finalized}
             />
           )}
         </section>
 
-        {/* Live Preview (right half) */}
+        {/* Live Preview (right) */}
         <section className="flex-1 min-w-[400px] min-h-0 overflow-auto bg-zinc-950 ">
           {mobileView ? (
             <ResponsiveMobilePreview
@@ -225,6 +254,7 @@ export default function EditorLayout({
               previewLoading={previewLoading}
               mobileView={mobileView}
               fileContents={fileContents}
+              colors={colors}
             />
           ) : (
             <LivePreview
@@ -234,6 +264,7 @@ export default function EditorLayout({
               projectName={projectName}
               loading={previewLoading}
               fileContents={fileContents}
+              colors={colors}
             />
           )}
         </section>

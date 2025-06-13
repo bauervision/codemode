@@ -1,5 +1,6 @@
 import React, { useRef, useLayoutEffect, useState } from "react";
 import LivePreview from "./LivePreview";
+import { ColorRoles } from "../types";
 
 interface ResponsiveMobilePreviewProps {
   device: "iphone" | "pixel" | "galaxy";
@@ -11,6 +12,7 @@ interface ResponsiveMobilePreviewProps {
   previewLoading: boolean;
   mobileView: boolean;
   fileContents: Record<string, { display: string; preview?: string }>;
+  colors: ColorRoles;
 }
 
 export function ResponsiveMobilePreview({
@@ -21,6 +23,7 @@ export function ResponsiveMobilePreview({
   projectName,
   mobileView,
   fileContents,
+  colors,
 }: ResponsiveMobilePreviewProps) {
   const outerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
@@ -90,6 +93,7 @@ export function ResponsiveMobilePreview({
               onRouteChange={setPreviewRoute}
               projectName={projectName}
               fileContents={fileContents}
+              colors={colors}
             />
           </div>
         </div>
