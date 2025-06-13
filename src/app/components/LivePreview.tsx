@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 import React from "react";
 
@@ -47,26 +48,22 @@ export default function LivePreview({
       className={`relative min-h-[400px] flex flex-col w-full h-full bg-zinc-950 border-zinc-900 rounded-2xl shadow-xl transition-all duration-500`}
       style={cssVars as React.CSSProperties}
     >
-      {/* Mobile overlay/drawer */}
-      {isMobilePreview && menuOpen && (
-        <>{/* ...mobile menu code as before... */}</>
-      )}
-
       {/* Navbar */}
       <PreviewNavbar
         projectName={projectName}
         mobile={isMobilePreview}
         onNavigate={onRouteChange}
         onMenuOpen={() => setMenuOpen(true)}
+        colors={colors}
       />
-      <main className="w-full min-h-[100vh]  flex flex-col">
+      <main className="w-full flex flex-col flex-1">
         <DemoPageRenderer
           route={route}
           projectName={projectName}
           colors={colors}
         />
       </main>
-      <Footer projectName={projectName} />
+      <Footer projectName={projectName} colors={colors} />
     </div>
   );
 }

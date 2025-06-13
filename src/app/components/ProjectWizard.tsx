@@ -21,8 +21,7 @@ export default function ProjectWizard({
 }: {
   onLaunch: (name: string, colors: ColorRoles) => void;
 }) {
-  const { colors, setColors, locks, setLocks, finalized, setFinalized } =
-    useTheme();
+  const { colors, setColors, locks, setLocks, setFinalized } = useTheme();
   const [step, setStep] = useState<
     "select" | "webName" | "customize" | "summary"
   >("select");
@@ -192,17 +191,6 @@ export default function ProjectWizard({
                   <Move className="w-4 h-4" />
                   Randomize Unlocked
                 </button>
-                <button
-                  onClick={() => setFinalized(true)}
-                  className={`px-4 py-2 font-bold rounded transition ${
-                    finalized
-                      ? "bg-green-600 text-white"
-                      : "bg-zinc-700 text-cyan-200 hover:bg-green-700"
-                  }`}
-                  type="button"
-                >
-                  Finalize Colors
-                </button>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full max-w-lg">
                 {COLOR_ROLES.map(({ key, label }) => (
@@ -283,11 +271,7 @@ export default function ProjectWizard({
                   </div>
                 ))}
               </div>
-              {!finalized && (
-                <div className="absolute top-2 right-2 bg-yellow-400 text-black text-xs px-3 py-1 rounded-full shadow font-bold z-20 animate-pulse pointer-events-none">
-                  DRAFT
-                </div>
-              )}
+
               <button
                 className="mt-4 w-full bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl py-3 font-bold text-lg transition"
                 onClick={() => setStep("summary")}

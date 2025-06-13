@@ -17,7 +17,7 @@ export function DemoPageRenderer({
           color: colors.text,
           transition: "background 0.3s, color 0.3s",
         }}
-        className="w-full min-h-[100vh] p-10 shadow-xl flex flex-col"
+        className="w-full flex-1 p-10 shadow-xl flex flex-col"
       >
         <h1 style={{ color: colors.text }} className="text-3xl font-bold mb-4">
           About
@@ -38,7 +38,7 @@ export function DemoPageRenderer({
           color: colors.text,
           transition: "background 0.3s, color 0.3s",
         }}
-        className="w-full min-h-[100vh] p-10 shadow-xl flex flex-col"
+        className="w-full  flex-1 p-10 shadow-xl flex flex-col"
       >
         <h1 style={{ color: colors.text }} className="text-3xl font-bold mb-4">
           Contact
@@ -59,7 +59,7 @@ export function DemoPageRenderer({
         color: colors.text,
         transition: "background 0.3s, color 0.3s",
       }}
-      className="w-full min-h-[100vh] p-10 shadow-xl flex flex-col"
+      className="w-full flex-1 p-10 shadow-xl flex flex-col"
     >
       <h1 style={{ color: colors.text }} className="text-4xl font-bold mb-4">
         Welcome to {projectName}!

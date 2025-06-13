@@ -4,8 +4,10 @@ import ProjectWizard from "./components/ProjectWizard";
 import EditorLayout from "./components/EditorLayout";
 import LoadingOverlay from "./components/LoadingOverlay";
 import { getInitialFiles } from "./constants";
+import { useTheme } from "./context/ThemeContext";
 
 export default function Home() {
+  const { colors } = useTheme();
   const [wizardOpen, setWizardOpen] = useState(true);
   const [showLoading, setShowLoading] = useState(false);
   const [editorReady, setEditorReady] = useState(false);
@@ -22,7 +24,7 @@ export default function Home() {
     setTimeout(() => {
       setShowLoading(false);
       setEditorReady(true);
-      setProjectFiles(getInitialFiles(name));
+      setProjectFiles(getInitialFiles(name, colors));
     }, 1200);
   };
 

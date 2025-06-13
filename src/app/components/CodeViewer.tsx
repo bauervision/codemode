@@ -33,16 +33,22 @@ export default function CodeViewer({
   finalized,
 }: Props) {
   return (
-    <div className="relative rounded-lg bg-zinc-950 p-4 shadow-lg font-mono text-sm whitespace-pre overflow-x-auto">
+    <div
+      className="relative rounded-lg bg-zinc-950 p-4 shadow-lg font-mono text-sm whitespace-pre overflow-x-auto overflow-y-auto "
+      style={{ lineHeight: 1.5 }}
+    >
       {/* Draft badge overlay */}
       {!finalized && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-yellow-400/10 rounded-lg pointer-events-none">
-          <span className="text-zinc-950 font-bold text-xl tracking-wider drop-shadow-lg animate-pulse">
-            DRAFT THEME
-          </span>
-          <span className="text-zinc-900 font-medium text-xs mt-1">
-            Finalize colors to inject them into your exported code
-          </span>
+        <div className="absolute inset-0 z-10 bg-yellow-400/10 rounded-lg pointer-events-none flex flex-col">
+          <div className="flex flex-col items-center mt-30">
+            <span className="text-yellow-500 font-bold text-xl tracking-wider drop-shadow-lg animate-pulse">
+              DRAFT THEME
+            </span>
+            <span className="text-zinc-300 font-medium text-xs mt-1 text-center animate-pulse">
+              Finalize colors to inject them into your exported code
+            </span>
+          </div>
+          {/* The rest of the space stays empty */}
         </div>
       )}
 
