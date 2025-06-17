@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import FileTabs from "./FileTabs";
 import CodeViewer from "./CodeViewer";
 import LivePreview from "./LivePreview";
+import { DownloadIcon } from "lucide-react";
 
 import { ProjectFileTree } from "./ProjectFileTree";
 
@@ -13,6 +14,7 @@ import { ColorRoles } from "../types";
 import { ThemeSidebarModule } from "./ThemeSidebarModule";
 import { generateRandomPalette } from "../utils/color";
 import { useTheme } from "../context/ThemeContext";
+import { exportProjectZip } from "../utils/exportZip";
 
 interface EditorLayoutProps {
   files: Record<string, { display: string; preview?: string }>;
@@ -86,6 +88,13 @@ export default function EditorLayout({
           title="Start a new project"
         >
           <FilePlus className="w-5 h-5" />
+        </button>
+
+        <button
+          onClick={() => exportProjectZip(fileContents, projectName)}
+          className="px-4 py-2 rounded text-sm font-bold bg-zinc-800 text-cyan-300 hover:bg-cyan-800 ml-8 border border-cyan-900"
+        >
+          <DownloadIcon className="mr-2 h-4 w-4" />
         </button>
         {/* Instructions (center) */}
         <div className="flex-1 text-center text-zinc-400 text-sm font-medium px-8">
