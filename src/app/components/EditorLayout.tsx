@@ -175,6 +175,7 @@ export default function EditorLayout({
           </div>
         )}
       </div>
+
       {/* Main editor area: FileTree | Code | Preview */}
       <div className="flex flex-1 min-h-0 bg-zinc-900 w-full">
         {/* Sidebar: File Tree */}

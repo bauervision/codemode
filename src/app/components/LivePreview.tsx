@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import React from "react";
-
-import { useState } from "react";
+import React, { useRef, useState } from "react";
 import Footer from "./PreviewFooter";
 import PreviewNavbar from "./PreviewNavbar";
 import { DemoPageRenderer } from "./DemoPageRenderer";
@@ -24,7 +22,7 @@ export default function LivePreview({
   fileContents: Record<string, { display: string; preview?: string }>;
   colors: ColorRoles;
 }) {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   // Map colors to CSS vars
   const cssVars = {
@@ -46,6 +44,7 @@ export default function LivePreview({
   return (
     <div
       className={`relative min-h-[400px] flex flex-col w-full h-full bg-zinc-950 border-zinc-900 rounded-2xl shadow-xl transition-all duration-500`}
+      ref={modalRef}
       style={cssVars as React.CSSProperties}
     >
       {/* Navbar */}
@@ -53,8 +52,8 @@ export default function LivePreview({
         projectName={projectName}
         mobile={isMobilePreview}
         onNavigate={onRouteChange}
-        onMenuOpen={() => setMenuOpen(true)}
         colors={colors}
+        modalRoot={modalRef}
       />
       <main className="w-full flex flex-col flex-1">
         <DemoPageRenderer
