@@ -20,15 +20,25 @@ export function DemoPageRenderer({
     transition: "background 0.3s, color 0.3s",
   };
 
+  const borderStyle = {
+    borderColor: colors.secondary,
+  };
+
   if (route === "/about") {
     return (
       <section
         className="w-full flex-1 p-10 shadow-xl flex flex-col"
         style={sectionStyle}
       >
-        <h1 className="text-3xl font-bold mb-4" style={headerStyle}>
-          About
-        </h1>
+        <div
+          className="inline-block border-b-4 px-2 pb-1 mb-6"
+          style={borderStyle}
+        >
+          <h1 className="text-3xl font-bold" style={headerStyle}>
+            About
+          </h1>
+        </div>
+
         <p className="text-center pb-4">
           This project was scaffolded using BauerVision CodeMode.
           <br />
@@ -55,9 +65,11 @@ export function DemoPageRenderer({
         className="w-full flex-1 p-10 shadow-xl flex flex-col"
         style={sectionStyle}
       >
-        <h1 className="text-3xl font-bold mb-4" style={headerStyle}>
-          Contact
-        </h1>
+        <div className="inline-block border-b-4 border-cyan-400 px-2 pb-1 mb-6">
+          <h1 className="text-3xl font-bold" style={headerStyle}>
+            Contact
+          </h1>
+        </div>
         <p className="text-center pb-4">
           Have questions or feedback?
           <br />

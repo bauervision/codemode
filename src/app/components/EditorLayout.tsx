@@ -15,6 +15,8 @@ import { ThemeSidebarModule } from "./ThemeSidebarModule";
 import { generateRandomPalette } from "../utils/color";
 import { useTheme } from "../context/ThemeContext";
 import { exportProjectZip } from "../utils/exportZip";
+import ExportReminderDialog from "./ExportReminderDialog";
+import { getInitialFiles } from "../constants";
 
 interface EditorLayoutProps {
   files: Record<string, { display: string; preview?: string }>;
@@ -47,7 +49,7 @@ export default function EditorLayout({
 
   const [learningMode, setLearningMode] = useState(false);
   const [previewLoading, setPreviewLoading] = useState(false);
-
+  const [showReminder, setShowReminder] = useState(false);
   const [mobileView, setMobileView] = useState(false);
   const [device, setDevice] = useState<"iphone" | "pixel" | "galaxy">("iphone");
   const deviceSizes = {
@@ -91,11 +93,24 @@ export default function EditorLayout({
         </button>
 
         <button
-          onClick={() => exportProjectZip(fileContents, projectName)}
+          onClick={() => {
+            const latestFiles = getInitialFiles(
+              projectName,
+              finalized ? colors : undefined
+            );
+            exportProjectZip(latestFiles, projectName);
+            setShowReminder(true);
+          }}
           className="px-4 py-2 rounded text-sm font-bold bg-zinc-800 text-cyan-300 hover:bg-cyan-800 ml-8 border border-cyan-900"
         >
           <DownloadIcon className="mr-2 h-4 w-4" />
         </button>
+
+        <ExportReminderDialog
+          open={showReminder}
+          onClose={() => setShowReminder(false)}
+        />
+
         {/* Instructions (center) */}
         <div className="flex-1 text-center text-zinc-400 text-sm font-medium px-8">
           Instantly scaffold a new project, preview code for each file, then
@@ -103,7 +118,7 @@ export default function EditorLayout({
         </div>
         {/* Modes (right) */}
         <div className="flex items-center gap-2">
-          <button
+          {/* <button
             className={`px-4 py-2 rounded text-sm font-bold ${
               learningMode
                 ? "bg-cyan-600 text-white"
@@ -112,7 +127,7 @@ export default function EditorLayout({
             onClick={() => setLearningMode((l) => !l)}
           >
             {learningMode ? "Learning Mode: ON" : "Learning Mode: OFF"}
-          </button>
+          </button> */}
           <button
             className={`px-4 py-2 rounded text-sm font-bold border ${
               mobileView
@@ -191,14 +206,7 @@ export default function EditorLayout({
           </div>
           {/* Theme Color Picker (fixed) */}
           <div className="shrink-0 border-t border-zinc-800 p-2">
-            <ThemeSidebarModule
-              colors={colors}
-              locks={locks}
-              setColors={setColors}
-              setLocks={setLocks}
-              finalized={finalized}
-              setFinalized={setFinalized}
-            />
+            <ThemeSidebarModule />
           </div>
         </aside>
 
